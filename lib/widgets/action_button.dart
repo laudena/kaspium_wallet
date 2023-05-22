@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/core_providers.dart';
+import '../kaspa/types/address.dart';
+import '../kaspa/types/address_prefix.dart';
 import '../l10n/l10n.dart';
 import '../receive/receive_sheet.dart';
 import '../send_sheet/send_sheet.dart';
+import '../util/ui_util.dart';
+import '../util/user_data_util.dart';
 import 'sheet_util.dart';
 
 class ActionButton extends ConsumerWidget {
@@ -95,6 +99,104 @@ class SendActionButton extends ConsumerWidget {
           theme: theme,
         );
       },
+    );
+  }
+}
+
+
+class PayActionButton extends ConsumerWidget {
+  final VoidCallback? onPressed;
+
+  const PayActionButton({
+    Key? key,
+    this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeProvider);
+    final styles = ref.watch(stylesProvider);
+    final l10n = l10nOf(context);
+
+    void handleQrCodeError() {
+      UIUtil.showSnackbar(l10n.scanQrCodeError, context);
+    }
+    void handleAddressData(String data, AddressPrefix prefix) {
+      final address = Address.tryParse(data, expectedPrefix: prefix);
+
+      if (address == null) {
+        handleQrCodeError();
+        return;
+      }
+
+      Sheets.showAppHeightNineSheet(
+        context: context,
+        theme: theme,
+        widget: SendSheet(address: address.encoded),
+      );
+    }
+
+    void handleMultipartData(List<String> parts, AddressPrefix prefix) {
+      final addressPart = Address.tryParse(parts[0], expectedPrefix: prefix);
+      if (addressPart == null) {
+        handleQrCodeError();
+        return;
+      }
+
+      var amountPart = BigInt.tryParse(parts[1]);
+      if (amountPart == null) {
+        handleQrCodeError();
+        return;
+      }
+
+      amountPart *= BigInt.from(100000000);
+      final amount = amountPart;
+      final notePart = parts[2];
+
+      Sheets.showAppHeightNineSheet(
+        context: context,
+        theme: theme,
+        widget: SendSheet(address: addressPart.encoded, amountRaw: amount, note: notePart),
+      );
+    }
+
+    Future<void> scanQrCode() async {
+      final qrCode = await UserDataUtil.scanQrCode(context);
+      final data = qrCode?.code;
+      if (data == null) {
+        return;
+      }
+
+      final prefix = ref.read(addressPrefixProvider);
+      final parts = data.split(';');
+
+      if (parts.length <= 1) {
+        handleAddressData(data, prefix);
+      } else {
+        handleMultipartData(parts, prefix);
+      }
+    }
+
+    return TextButton(
+        style: styles.primaryButtonStyle,
+        child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+
+                children: [
+                  Text(
+                    'Pay',
+                    textAlign: TextAlign.center,
+                    style: styles.textStyleButtonPrimary,
+                    maxLines: 1,
+                  ),
+                  Icon(
+                    Icons.mobile_friendly,
+                    size: 40,
+                  )]
+            )
+        ),
+        onPressed: scanQrCode
     );
   }
 }
