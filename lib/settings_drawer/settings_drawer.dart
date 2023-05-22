@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaspium_wallet/cashier_sheet/cashier_sheet.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../app_icons.dart';
@@ -106,6 +107,12 @@ class _SettingsSheetState extends ConsumerState<SettingsSheet>
       final notifier = ref.read(currencyProvider.notifier);
       notifier.updateCurrency(AvailableCurrency(selection));
     }
+  }
+  Future<void> _showRetailDialog() async {
+    await showAppDialog(
+      context: context,
+      builder: (context) => const CashierSheet(),
+    );
   }
 
   Future<void> _showLanguageDialog() async {
@@ -217,7 +224,26 @@ class _SettingsSheetState extends ConsumerState<SettingsSheet>
                     children: [
                       Container(
                         margin:
-                            EdgeInsetsDirectional.only(start: 30, bottom: 10),
+                        EdgeInsetsDirectional.only(start: 30, bottom: 10),
+                        child: Text(
+                          'Retail',
+                          style: styles.textStyleAppTextFieldHint,
+                        ),
+                      ),
+                      Divider(height: 2, color: theme.text15),
+                      Consumer(builder: (context, ref, _) {
+                        final currency = ref.watch(currencyProvider);
+                        return DoubleLineItem(
+                          heading: 'Cashier',
+                          defaultMethod: currency,
+                          icon: AppIcons.currency,
+                          onPressed: _showRetailDialog,
+                        );
+                      }),
+                      Divider(height: 2, color: theme.text15),
+                      Container(
+                        margin:
+                            EdgeInsetsDirectional.only(start: 30, top: 20, bottom: 10),
                         child: Text(
                           l10n.preferences,
                           style: styles.textStyleAppTextFieldHint,
