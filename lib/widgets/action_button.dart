@@ -149,7 +149,7 @@ class PayActionButton extends ConsumerWidget {
         return;
       }
 
-      amountPart *= BigInt.from(100000000);
+      amountPart = BigInt.parse((amountPart ~/ BigInt.from(1000000) * BigInt.from(1000000)).toString());
       final amount = amountPart;
       final notePart = parts[2];
 
