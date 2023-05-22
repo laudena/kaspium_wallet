@@ -1,7 +1,7 @@
 ### Please read below about this fork.
-![](doc/point_of_sale_card.jpeg)
-![](doc/pay_button.jpeg)
-![](doc/payment_scan_result.jpeg)
+| Point of Sale Card | Payment Button | Scan result |
+|---|---|---|
+<img src="doc/point_of_sale_card.jpeg" width="200"/> | <img src="doc/pay_button.jpeg" width="200"/> | <img src="doc/payment_scan_result.jpeg" width="200"/> 
 
 
 # Kaspium - a non-custodial wallet for Kaspa blockDAG
