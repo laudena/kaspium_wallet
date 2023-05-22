@@ -1,4 +1,7 @@
 ### Please read below about this fork.
+![](doc/point_of_sale_card.jpeg)
+![](doc/pay_button.jpeg)
+![](doc/payment_scan_result.jpeg)
 
 
 # Kaspium - a non-custodial wallet for Kaspa blockDAG
@@ -38,3 +41,4 @@ Kaspium is released under the MIT License
 I am currently exploring retail solutions using Kaspa. As part of this exploration, I have implemented a point-of-sale page designed for retail stores to conveniently present customers with a payment option.
 The key distinction between the standard "Send" and "Receive" options and this "Pay" solution lies in the user's ability to scan not only the recipient **address** but also the **amount** and the **note** (all given by the seller).
 My model scenario is buying a cup of coffee at the shop around the corner, using contactless payment of Kaspa. It's currently illustrated with QR Code scanning, and in the future I will look into NFC.
+
