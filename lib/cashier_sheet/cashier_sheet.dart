@@ -182,7 +182,8 @@ class _CashierSheetState extends ConsumerState<CashierSheet> {
                                     )
                                   ]),
                                 // ******* Kaspa calculated amount End******* //
-                                  Padding(
+                                Visibility(
+                                  child: Padding(
                                       padding: const EdgeInsets.only(
                                         top: 5,
                                         bottom: 5,
@@ -226,9 +227,14 @@ class _CashierSheetState extends ConsumerState<CashierSheet> {
                                       ),
                                     ),
                                   ),
-                                  const SheetHandle(),
-                                  const AccountAddressWidget(),
-                                  const SizedBox(width: 60, height: 60),
+                                  maintainSize: true,
+                                  maintainAnimation: true,
+                                  maintainState: true,
+                                  visible: kaspaValue > 0,
+                                ),
+                                const SheetHandle(),
+                                const AccountAddressWidget(),
+                                const SizedBox(width: 60, height: 60),
 
                               ],
                             ),
@@ -257,7 +263,8 @@ class _CashierSheetState extends ConsumerState<CashierSheet> {
       void onValueChanged(String text) {
         final value = formatter.tryParse(text);
         if (value == null) {
-          amountRaw = null;
+          amountRaw = BigInt.zero;
+          amount = Decimal.zero;
           return;
         }
 
