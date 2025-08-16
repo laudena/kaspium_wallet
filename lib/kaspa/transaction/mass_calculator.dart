@@ -1,5 +1,5 @@
-import '../utils.dart';
 import 'types.dart';
+import '../utils.dart';
 
 //1 byte for OP_DATA_65 + 64 (length of signature) + 1 byte for sig hash type
 const kSignatureSize = 1 + 64 + 1;

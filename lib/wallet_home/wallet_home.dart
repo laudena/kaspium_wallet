@@ -38,7 +38,11 @@ class WalletHome extends HookConsumerWidget {
 
     ref.watch(_walletWatcherProvider);
 
+    // Ensure stable hook order: declare useRef outside useEffect
+    final isHandling = useRef(false);
+
     useEffect(() {
+
       void handle(String? appLink) {
         if (appLink == null) {
           return;
@@ -48,6 +52,8 @@ class WalletHome extends HookConsumerWidget {
         if (walletAuth.isLocked) {
           return;
         }
+        if (isHandling.value) return;
+        isHandling.value = true;
 
         final prefix = ref.read(addressPrefixProvider);
         KaspaUri? uri;
@@ -57,33 +63,41 @@ class WalletHome extends HookConsumerWidget {
           uri = KaspaUri.tryParse(appLink, prefix: prefix);
         }
 
-        Future.microtask(() {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // Delay slightly to let any transient lifecycle (inactive/resumed)
+          // caused by NFC intents settle, so the sheet isn't immediately closed.
+          Future.delayed(const Duration(milliseconds: 300), () {
           if (uri == null) {
             UIUtil.showSnackbar(l10n.kaspaUriInvalid, context);
+            // clear link and unlock handling
+            ref.read(appLinkProvider.notifier).state = null;
+            isHandling.value = false;
             return;
           }
 
           UIUtil.showSendFlow(context, ref: ref, uri: uri);
-
+          // clear link and unlock handling
           ref.read(appLinkProvider.notifier).state = null;
+          isHandling.value = false;
+          });
         });
       }
 
-      final sub1 = ref.listen<String?>(
+      ref.listen<String?>(
         appLinkProvider,
         (_, next) => handle(next),
       );
-      final sub2 = ref.listen(
+      ref.listen(
         walletAuthProvider.select((auth) => auth.isLocked),
         (_, __) => handle(ref.read(appLinkProvider)),
       );
 
-      handle(ref.read(appLinkProvider));
+      // Defer initial handle to next frame to avoid modifying providers during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        handle(ref.read(appLinkProvider));
+      });
 
-      return () {
-        sub1.close();
-        sub2.close();
-      };
+      return null;
     }, const []);
 
     return Column(

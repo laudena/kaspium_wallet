@@ -13,6 +13,7 @@ class Sheets {
     double radius = 30,
     int animationDurationMs = 250,
     bool removeUntilHome = false,
+    bool barrierDismissible = true,
     bool closeOnTap = false,
     Function? onDisposed,
     Color? backgroundColor,
@@ -29,6 +30,7 @@ class Sheets {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrier: barrier,
       animationDurationMs: animationDurationMs,
+      barrierDismissibleFlag: barrierDismissible,
       closeOnTap: closeOnTap,
       onDisposed: onDisposed,
     );
@@ -120,6 +122,7 @@ class _AppHeightNineModalRoute<T> extends PopupRoute<T> {
     RouteSettings? settings,
     this.barrier,
     this.animationDurationMs,
+    this.barrierDismissibleFlag = true,
     this.closeOnTap = false,
     this.onDisposed,
   }) : super(settings: settings);
@@ -129,6 +132,7 @@ class _AppHeightNineModalRoute<T> extends PopupRoute<T> {
   final Color? color;
   final Color? barrier;
   final int? animationDurationMs;
+  final bool barrierDismissibleFlag;
   final bool closeOnTap;
   final Function? onDisposed;
 
@@ -136,7 +140,7 @@ class _AppHeightNineModalRoute<T> extends PopupRoute<T> {
   Color? get barrierColor => barrier;
 
   @override
-  bool get barrierDismissible => true;
+  bool get barrierDismissible => barrierDismissibleFlag;
 
   @override
   String? barrierLabel;

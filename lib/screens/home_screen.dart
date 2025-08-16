@@ -27,7 +27,6 @@ class HomeScreen extends HookConsumerWidget {
     final theme = ref.watch(themeProvider);
     l10nWrapper.l10n = l10nOf(context);
 
-    final scaffoldKey = ref.watch(homePageScaffoldKeyProvider);
 
     ref.listen(walletAuthProvider.select((walletAuth) => walletAuth.isLocked),
         (wasLocked, isLocked) {
@@ -112,7 +111,6 @@ class HomeScreen extends HookConsumerWidget {
     });
 
     return Scaffold(
-      key: scaffoldKey,
       drawerEdgeDragWidth: 60,
       resizeToAvoidBottomInset: false,
       backgroundColor: theme.background,

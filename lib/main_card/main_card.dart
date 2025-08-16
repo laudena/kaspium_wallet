@@ -12,9 +12,6 @@ import '../util/ui_util.dart';
 import '../util/user_data_util.dart';
 import '../widgets/app_icon_button.dart';
 
-final homePageScaffoldKeyProvider =
-    Provider((ref) => GlobalKey<ScaffoldState>());
-
 class MainCard extends ConsumerWidget {
   const MainCard({Key? key}) : super(key: key);
 
@@ -28,7 +25,6 @@ class MainCard extends ConsumerWidget {
     final kaspaBalance = ref.watch(formatedTotalBalanceProvider);
     final fiatBalance = ref.watch(formatedTotalFiatProvider);
     final kaspaPrice = ref.watch(formatedKaspaPriceProvider);
-    final scaffoldKey = ref.watch(homePageScaffoldKeyProvider);
 
     Future<void> scanQrCode() async {
       final qrCode = await UserDataUtil.scanQrCode(context);
@@ -74,7 +70,7 @@ class MainCard extends ConsumerWidget {
                     final error = ref.watch(networkErrorProvider);
                     return AppIconButton(
                       icon: error ? AppIcons.warning : AppIcons.settings,
-                      onPressed: () => scaffoldKey.currentState?.openDrawer(),
+                      onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
                     );
                   }),
                   Column(

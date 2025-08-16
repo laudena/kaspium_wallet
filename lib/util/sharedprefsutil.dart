@@ -76,7 +76,7 @@ class SharedPrefsUtil {
         return null;
       }
     }
-    return msg['data'];
+    return msg['data'] as T?;
   }
 
   Future<void> remove(String key) => sharedPrefs.remove(key);
