@@ -43,6 +43,7 @@
                 <data android:scheme="kaspatest" />
                 <data android:scheme="kaspadev" />
                 <data android:scheme="kaspasim" />
+                <data android:scheme="kaspaterminal" />
             </intent-filter>
         </activity>
         
