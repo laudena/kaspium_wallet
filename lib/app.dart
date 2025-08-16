@@ -49,7 +49,7 @@ class App extends HookConsumerWidget {
         try {
           final initial = await appLinks.getInitialLink();
           if (initial != null) {
-            ref.read(appLinkProvider.notifier).state = initial;
+            ref.read(appLinkProvider.notifier).state = initial.toString();
           }
         } catch (_) {}
       });

@@ -72,13 +72,13 @@ class WalletHome extends HookConsumerWidget {
       final sub1 = ref.listen<String?>(
         appLinkProvider,
         (_, next) => handle(next),
-        fireImmediately: true,
       );
       final sub2 = ref.listen(
         walletAuthProvider.select((auth) => auth.isLocked),
         (_, __) => handle(ref.read(appLinkProvider)),
-        fireImmediately: true,
       );
+
+      handle(ref.read(appLinkProvider));
 
       return () {
         sub1.close();
