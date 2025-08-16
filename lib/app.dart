@@ -44,10 +44,32 @@ class App extends HookConsumerWidget {
 
     useEffect(() {
       final appLinks = AppLinks();
+
+      Future.microtask(() async {
+        try {
+          final initial = await appLinks.getInitialLink();
+          if (initial != null) {
+            ref.read(appLinkProvider.notifier).state = initial.toString();
+          }
+        } catch (_) {}
+      });
+
       final sub = appLinks.stringLinkStream.listen((appLink) {
         ref.read(appLinkProvider.notifier).state = appLink;
       });
-      return sub.cancel;
+
+      const channel = MethodChannel('io.kaspium.kaspiumwallet/links');
+      channel.setMethodCallHandler((call) async {
+        if (call.method == 'link') {
+          final s = call.arguments as String?;
+          ref.read(appLinkProvider.notifier).state = s;
+        }
+      });
+
+      return () {
+        sub.cancel();
+        channel.setMethodCallHandler(null);
+      };
     }, const []);
 
     return Container(

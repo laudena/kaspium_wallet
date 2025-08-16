@@ -39,17 +39,23 @@ class WalletHome extends HookConsumerWidget {
     ref.watch(_walletWatcherProvider);
 
     useEffect(() {
-      final notifier = ref.read(appLinkProvider.notifier);
-      return notifier.addListener((appLink) {
+      void handle(String? appLink) {
         if (appLink == null) {
           return;
         }
-        final walletAuth = ref.read(walletAuthNotifierProvider);
-        if (walletAuth == null || walletAuth.walletIsLocked) {
+
+        final walletAuth = ref.read(walletAuthProvider);
+        if (walletAuth.isLocked) {
           return;
         }
+
         final prefix = ref.read(addressPrefixProvider);
-        final uri = KaspaUri.tryParse(appLink, prefix: prefix);
+        KaspaUri? uri;
+        if (appLink.startsWith('kaspaterminal://')) {
+          uri = KaspaTerminalUri.tryParse(appLink, prefix: prefix);
+        } else {
+          uri = KaspaUri.tryParse(appLink, prefix: prefix);
+        }
 
         Future.microtask(() {
           if (uri == null) {
@@ -59,9 +65,25 @@ class WalletHome extends HookConsumerWidget {
 
           UIUtil.showSendFlow(context, ref: ref, uri: uri);
 
-          notifier.state = null;
+          ref.read(appLinkProvider.notifier).state = null;
         });
-      }, fireImmediately: true);
+      }
+
+      final sub1 = ref.listen<String?>(
+        appLinkProvider,
+        (_, next) => handle(next),
+      );
+      final sub2 = ref.listen(
+        walletAuthProvider.select((auth) => auth.isLocked),
+        (_, __) => handle(ref.read(appLinkProvider)),
+      );
+
+      handle(ref.read(appLinkProvider));
+
+      return () {
+        sub1.close();
+        sub2.close();
+      };
     }, const []);
 
     return Column(
