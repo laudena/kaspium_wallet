@@ -46,7 +46,6 @@
                 <data android:scheme="kaspatest" />
                 <data android:scheme="kaspadev" />
                 <data android:scheme="kaspasim" />
-                <data android:scheme="kaspaterminal" />
             </intent-filter>
 
             <!-- Handle NFC tags that contain a URI (text/uri-list) -->
@@ -58,7 +57,6 @@
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="kaspaterminal"/>
                 <data android:scheme="kaspa" />
             </intent-filter>
         </activity>

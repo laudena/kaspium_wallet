@@ -88,16 +88,4 @@ void main() {
     expect(uri.others, isEmpty);
   });
 
-  test('Kaspaterminal uri with address and amount', () {
-    final amount = Decimal.parse('1.234');
-    final uriStr =
-        'kaspaterminal://address/$address/payment/${amount.toString()}';
-    final uri = KaspaTerminalUri.tryParse(uriStr);
-
-    expect(uri, isNotNull);
-    expect(uri!.address.toString(), equals(address));
-    expect(uri.amount, equals(Amount.value(amount)));
-    expect(uri.label, isNull);
-    expect(uri.message, isNull);
-  });
 }

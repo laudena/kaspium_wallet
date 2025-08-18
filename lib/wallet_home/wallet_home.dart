@@ -56,12 +56,7 @@ class WalletHome extends HookConsumerWidget {
         isHandling.value = true;
 
         final prefix = ref.read(addressPrefixProvider);
-        KaspaUri? uri;
-        if (appLink.startsWith('kaspaterminal://')) {
-          uri = KaspaTerminalUri.tryParse(appLink, prefix: prefix);
-        } else {
-          uri = KaspaUri.tryParse(appLink, prefix: prefix);
-        }
+        final uri = KaspaUri.tryParse(appLink, prefix: prefix);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           // Delay slightly to let any transient lifecycle (inactive/resumed)
